@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
+	default-lazy-init="true">
+	<bean id="dataSource"
+		class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName"
+			value="com.mysql.jdbc.Driver">
+		</property>
+		<property name="url"
+			value="jdbc:mysql://localhost:3306/testssh">
+		</property>
+		<property name="username" value="ssh1"></property>
+		<property name="password" value="ssh1"></property>
+	</bean>
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">
+					org.hibernate.dialect.MySQLDialect
+				</prop>
+				 <prop key="hibernate.show_sql">true</prop>
+			</props>
+		</property>
+		
+		<property name="mappingResources">
+			<list>
+				<value>com/domain/Users.hbm.xml</value></list>
+		</property>
+		</bean>
+		<!--  DAO注入sessionFactory -->
+	    <bean id="logind" class="com.persistence.LoginDAOImpl">
+		<!-- 注入持久化操作所需的SessionFactory -->
+		<property name="sessionFactory" ref="sessionFactory"/>
+	    </bean>
+	    <!--service注入dao id为下面的ref  class为 service实现类 name="service实现类中声明的dao"-->
+	    <bean id="logins" class="com.service.LoginServiceImpl" >
+         <property name="logindao" ref="logind"/>
+        </bean>
+   		<!-- Action注入 service  id="" 注入 class="action路径" name="loginservice"与LoginAction中声明的要保持一致 ref随便取-->
+   		<bean id="com.action.LoginAction" class="com.action.LoginAction" scope="prototype">
+        <property name="loginservice" ref="logins"/>
+ 	    </bean>
+ 	    
+   		<!--  DAO注入sessionFactory -->
+	    <bean id="registerd" class="com.persistence.RegisterDaoImpl">
+		<!-- 注入持久化操作所需的SessionFactory -->
+		<property name="sessionFactory" ref="sessionFactory"/>
+	   </bean>
+	 <!--service注入dao id为下面的ref  class为 service实现类 name="service实现类中声明的dao"-->
+	 <bean id="registers" class="com.service.RegisterServiceImpl" >
+       <property name="registerDAO" ref="registerd"/>
+   </bean>
+    <bean id="com.action.RegisterAction" class="com.action.RegisterAction" scope="prototype">
+       <property name="registerService" ref="registers"/>
+   </bean>
+   </beans>
