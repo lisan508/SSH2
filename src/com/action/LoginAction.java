@@ -2,7 +2,11 @@ package com.action;
 
 import com.dao.LoginService;
 import com.opensymphony.xwork2.ActionSupport;
-
+/**
+ * 
+ * @author wjh4536
+ *
+ */
 public class LoginAction extends ActionSupport{
 	private LoginService loginservice;
 	private String username;
@@ -34,7 +38,7 @@ public class LoginAction extends ActionSupport{
 
 	public String login(){
 		System.out.println("start ");
-		boolean flag = loginservice.login(username, password);//调用数据库查询方法，验证用户名、密码
+		boolean flag = loginservice.login(username, password);
 		if(flag){
 			return "Success";
 		}else{
